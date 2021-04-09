@@ -21,7 +21,7 @@ export default function App() {
 
 
   async function getAppData() {
-    const BASE_URL = '';
+    const BASE_URL = 'http://localhost:3001/api/videoblogs';
     const videoblogs = await fetch(BASE_URL).then(res => res.json());
     setState((prevState) => ({
       ...prevState,
@@ -49,9 +49,9 @@ export default function App() {
 
   async function addBlog(e) {
     if(!state.user) return;
-    
+
     e.preventDefault();
-    const BASE_URL = '';
+    const BASE_URL = 'http://localhost:3001/api/videoblogs';
     const videoblog = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
@@ -89,14 +89,54 @@ export default function App() {
       <Header user={state.user} />
       <main>
         <section>
-
-          {/* display all the blog info here like doing the map function so it can display all the previous blogs. */}
+          {state.videoblogs.map((v) => (
+            <article key={v.videoblog}>
+              <div>{v.name}</div>
+              <div><img src={v.poster} /></div>
+              <div>{v.author}</div>
+              <div>{v.rating}</div>
+              <div>{v.date}</div>
+              <div>{v.howtoenjoy}</div>
+            </article>
+          ))}
+          <hr />
+          
         
       {
         state.user &&
         <>
-    <form>
-
+    <form onSubmit={addBlog}>
+          <label>
+            <span>Game Name</span>
+            <input name='name' value={state.newBlog.name} onChange={handleChange} />
+          </label>
+          <label>
+            <span>Poster Link</span>
+            <input name='poster' value={state.newBlog.poster} onChange={handleChange} />
+          </label>
+          <label>
+            <span>Author</span>
+            <input name='author' value={state.newBlog.author} onChange={handleChange} />
+          </label>
+          <label>
+            <span>Rating</span>
+            <select name='rating' value={state.newBlog.rating} onChange={handleChange} >
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+          <label>
+            <span>Date</span>
+            <input name='poster' type='date' value={state.newBlog.date} onChange={handleChange} />
+          </label>
+          <label>
+            <span>How to Enjoy</span>
+            <textarea name='howtoenjoy' value={state.newBlog.howtoenjoy} onChange={handleChange}></textarea>
+          </label>
+          <button>Add Videogame Blog</button>
     </form>
     </>
       }

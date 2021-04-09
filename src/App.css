@@ -16,9 +16,10 @@ header {
   align-items: center;
   height: 4rem;
   padding-left: 1rem;
-  background-color: #737495;
+  background-color: rgba(86, 17, 28, 0.8);
   box-shadow: 3px 3px 3px 3px #808080;
   color: #ffffff;
+  
 }
 header > ul {
   list-style: none;
