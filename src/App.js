@@ -87,16 +87,23 @@ export default function App() {
   return (
     <>
       <Header user={state.user} />
+      <br/><br/>
       <main>
         <section>
           {state.videoblogs.map((v) => (
-            <article key={v.videoblog}>
-              <div>{v.name}</div>
-              <div><img src={v.poster} /></div>
-              <div>{v.author}</div>
-              <div>{v.rating}</div>
-              <div>{v.date}</div>
-              <div>{v.howtoenjoy}</div>
+            <article className='blog-container' key={v.videoblog}>
+              <div className='name'>{v.name}</div>
+              <br/>
+              <div><img className='imgs' src={v.poster} /></div>
+              <br/>
+              <div>Author: {v.author}</div>
+              <br/>
+              <div>Rating: {v.rating}</div>
+              <br/>
+              <div>Created: {v.date}</div>
+              <br/>
+              <div>Tips to Enjoy: {v.howtoenjoy}</div>
+              <br/><br/><br/>
             </article>
           ))}
           <hr />
@@ -107,19 +114,19 @@ export default function App() {
         <>
     <form onSubmit={addBlog}>
           <label>
-            <span>Game Name</span>
+            <span>Game Name </span>
             <input name='name' value={state.newBlog.name} onChange={handleChange} />
           </label>
+          <br/>
           <label>
-            <span>Poster Link</span>
+            <span>Poster Link </span>
             <input name='poster' value={state.newBlog.poster} onChange={handleChange} />
           </label>
+          <br/>
+          
+          <br/>
           <label>
-            <span>Author</span>
-            <input name='author' value={state.newBlog.author} onChange={handleChange} />
-          </label>
-          <label>
-            <span>Rating</span>
+            <span>Rating </span>
             <select name='rating' value={state.newBlog.rating} onChange={handleChange} >
               <option value="1">1</option>
               <option value="2">2</option>
@@ -128,15 +135,14 @@ export default function App() {
               <option value="5">5</option>
             </select>
           </label>
+          <br/>
           <label>
-            <span>Date</span>
-            <input name='poster' type='date' value={state.newBlog.date} onChange={handleChange} />
-          </label>
-          <label>
-            <span>How to Enjoy</span>
+            <span>How to Enjoy </span>
             <textarea name='howtoenjoy' value={state.newBlog.howtoenjoy} onChange={handleChange}></textarea>
           </label>
+          <br/><br/>
           <button>Add Videogame Blog</button>
+          <br/><br/>
     </form>
     </>
       }
