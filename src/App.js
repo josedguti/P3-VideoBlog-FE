@@ -21,7 +21,7 @@ export default function App() {
 
 
   async function getAppData() {
-    const BASE_URL = 'http://localhost:3001/api/videoblogs';
+    const BASE_URL = 'https://videoblog-backend.herokuapp.com/api/videoblogs';
     const videoblogs = await fetch(BASE_URL).then(res => res.json());
     setState((prevState) => ({
       ...prevState,
@@ -51,7 +51,7 @@ export default function App() {
     if(!state.user) return;
 
     e.preventDefault();
-    const BASE_URL = 'http://localhost:3001/api/videoblogs';
+    const BASE_URL = 'https://videoblog-backend.herokuapp.com/api/videoblogs';
     const videoblog = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
