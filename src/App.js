@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Header from './components/Header/Header';
 import './App.css';
-
+import moment from 'moment';
 import { auth } from './services/firebase';
 
 
@@ -31,7 +31,7 @@ export default function App() {
 
   useEffect(() => {
     getAppData();
-    auth.onAuthStateChanged(user => {
+    const cancelSubscription = auth.onAuthStateChanged(user => {
       if(user) {
         setState(prevState => ({
           ...prevState,
@@ -43,7 +43,12 @@ export default function App() {
           user: null,
         }))
       }
-    })
+    });
+
+      return function() {
+        cancelSubscription();
+      }
+
   }, []);
 
 
@@ -83,6 +88,8 @@ export default function App() {
     }))
   }
 
+  
+
 
   return (
     <>
@@ -94,15 +101,15 @@ export default function App() {
             <article className='blog-container' key={v.videoblog}>
               <div className='name'>{v.name}</div>
               <br/>
-              <div><img className='imgs' src={v.poster} /></div>
+              <div><img className='imgs' src={v.poster} alt='poster' /></div>
               <br/>
-              <div>Author: {v.author}</div>
+              <div><strong>Author:</strong> {v.author}</div>
               <br/>
-              <div>Rating: {v.rating}</div>
+              <div><strong>Rating:</strong> {v.rating}</div>
               <br/>
-              <div>Created: {v.date}</div>
+              <div><strong>Created:</strong> {moment(v.date).format('MM-DD-YYYY')}</div>
               <br/>
-              <div>Tips to Enjoy: {v.howtoenjoy}</div>
+              <div><strong>Tips to Enjoy:</strong> {v.howtoenjoy}</div>
               <br/><br/><br/>
             </article>
           ))}
@@ -119,7 +126,7 @@ export default function App() {
           </label>
           <br/>
           <label>
-            <span>Poster Link </span>
+            <span>    Poster Link </span>
             <input name='poster' value={state.newBlog.poster} onChange={handleChange} />
           </label>
           <br/>
