@@ -16,8 +16,8 @@ Videogame Blog is a Web App where you can upload previous games you've played, r
 
 ## 📷 Screenshots
 
-![wireframe]()
-![websitepic1]()
+![wireframe](/public/images/wireframe.png)
+![websitepic1](/public/images/website.png)
 
 ## 🔌 Getting Started
 
