@@ -17,11 +17,13 @@ export default function App() {
       date: '',
       howtoenjoy: ''
     },
+    editMode: false
   });
 
-
+  useEffect(() => {
   async function getAppData() {
-    const BASE_URL = 'https://videoblog-backend.herokuapp.com/api/videoblogs';
+    if(!state.user) return;
+    const BASE_URL = `https://videoblog-backend.herokuapp.com/api/videoblogs?uid=${state.user.uid}`;
     const videoblogs = await fetch(BASE_URL).then(res => res.json());
     setState((prevState) => ({
       ...prevState,
@@ -29,7 +31,7 @@ export default function App() {
     }))
   }
 
-  useEffect(() => {
+  
     getAppData();
     const cancelSubscription = auth.onAuthStateChanged(user => {
       if(user) {
@@ -40,7 +42,7 @@ export default function App() {
       } else {
         setState(prevState => ({
           ...prevState,
-          user: null,
+          user,
         }))
       }
     });
@@ -49,33 +51,62 @@ export default function App() {
         cancelSubscription();
       }
 
-  }, []);
+  }, [state.user]);
 
 
-  async function addBlog(e) {
+  async function handleSubmit(e) {
     if(!state.user) return;
 
     e.preventDefault();
+
     const BASE_URL = 'https://videoblog-backend.herokuapp.com/api/videoblogs';
-    const videoblog = await fetch(BASE_URL, {
+
+    if(!state.editMode) {
+    
+      const videoblogs = await fetch(BASE_URL, {
       method: 'POST',
       headers: {
         'Content-type': 'Application/json'
       },
-      body: JSON.stringify(state.newBlog)
-    }).then(res => res.json());
-    setState((prevState) => ({
+      body: JSON.stringify({...state.newBlog, uid: state.user.uid })
+      }).then(res => res.json());
+      setState((prevState) => ({
       ...prevState,
-      videoblogs: [...prevState.videoblogs, videoblog],
+      videoblogs,
       newBlog: {
         name: '',
         poster: '',
-        author: '',
+        author: state.user.displayName,
         rating: '1',
         date: '',
         howtoenjoy: '',
       },
-    }));
+      }));
+    } else {
+      const { name, poster, rating, howtoenjoy, _id } = state.newBlog;
+
+      const videoblogs = await fetch(`${BASE_URL}/${_id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-type': 'Application/json'
+        },
+        body: JSON.stringify({ name, poster, rating, howtoenjoy })
+      }).then(res => res.json());
+
+      setState(prevState => ({
+        ...prevState,
+        videoblogs,
+        newBlog: {
+          name: '',
+          poster: '',
+          author: '',
+          rating: '1',
+          date: '',
+          howtoenjoy: ''
+        },
+        editMode: false
+      }));
+    }
   }
 
   function handleChange(e) {
@@ -88,8 +119,48 @@ export default function App() {
     }))
   }
 
-  
+  async function handleDelete(videoblogId) {
+    if(!state.user) return;
+    const URL = `https://videoblog-backend.herokuapp.com/api/videoblogs/${videoblogId}`
+    const videoblogs = await fetch(URL, {
+      method: 'DELETE'
+    }).then(res => res.json());
 
+    setState(prevState => ({
+      ...prevState,
+      videoblogs,
+    }))
+  }
+
+  function handleEdit(videoblogId) {
+    const { name, poster, rating, howtoenjoy, _id } = state.videoblogs.find(videoblog => videoblog._id === videoblogId);
+    setState(prevState => ({
+      ...prevState,
+      newBlog: {
+        name,
+        poster,
+        rating,
+        howtoenjoy,
+        _id
+      },
+      editMode: true
+    }));
+  }
+
+  function handleCancel() {
+    setState(prevState => ({
+      ...prevState,
+      newBlog: {
+        name: '',
+        poster: '',
+        author: '',
+        rating: '1',
+        date: '',
+        howtoenjoy: ''
+      },
+      editMode: false
+    }))
+  }
 
   return (
     <>
@@ -110,6 +181,8 @@ export default function App() {
               <div><strong>Created:</strong> {moment(v.date).format('MM-DD-YYYY')}</div>
               <br/>
               <div><strong>Tips to Enjoy:</strong> {v.howtoenjoy}</div>
+              <br/>
+              <div onClick={() => handleDelete(v._id)} className='delete'>{'🗑'}</div> <br/>{ !state.editMode && <div onClick={() => handleEdit(v._id)} className='update'>{'🖌'}</div>}
               <br/><br/><br/>
             </article>
           ))}
@@ -119,7 +192,7 @@ export default function App() {
       {
         state.user &&
         <>
-    <form onSubmit={addBlog}>
+    <form onSubmit={handleSubmit}>
           <label>
             <span>Game Name </span>
             <input name='name' value={state.newBlog.name} onChange={handleChange} />
@@ -148,9 +221,11 @@ export default function App() {
             <textarea name='howtoenjoy' value={state.newBlog.howtoenjoy} onChange={handleChange}></textarea>
           </label>
           <br/><br/>
-          <button>Add Videogame Blog</button>
+          <button>{state.editMode ? 'Edit Blog' : 'Add Videogame Blog' }</button>
           <br/><br/>
+          { state.editMode && <button onClick={handleCancel} className='cancel' >Cancel</button> }
     </form>
+    
     </>
       }
       </section>
