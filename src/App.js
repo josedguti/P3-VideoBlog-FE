@@ -60,7 +60,7 @@ export default function App() {
     e.preventDefault();
 
     const BASE_URL = 'https://videoblog-backend.herokuapp.com/api/videoblogs';
-
+    
     if(!state.editMode) {
     
       const videoblogs = await fetch(BASE_URL, {
@@ -76,7 +76,7 @@ export default function App() {
       newBlog: {
         name: '',
         poster: '',
-        author: state.user.displayName,
+        author: '',
         rating: '1',
         date: '',
         howtoenjoy: '',
